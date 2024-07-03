@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     "department",
     "absenceRequests",
     "trainingRequests",
-    "publicHoliday"
+    "publicHoliday",
+    "timeDependentVar"
 ]
 
 # needed for custom user model
