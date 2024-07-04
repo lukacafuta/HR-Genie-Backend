@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 ]
 
 # needed for custom user model
-# AUTH_USER_MODEL = "customUser.CustomUser"   # name of the App. name of the model
+AUTH_USER_MODEL = "customUser.CustomUser"   # name of the App. name of the model
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
