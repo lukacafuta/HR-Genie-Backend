@@ -3,6 +3,8 @@
   - only the approver can change the statusApproval of the absenceRequest and Training Request
   - the requester can only publish absence and training as Pending
   - only the requester can modify the statusAdvancement of the Training
+- Validations in the serializers
+  - TBC
 - views:
   - absenceRequests
     - POST one request with the logged in user: statusApproval fixed to Pending
@@ -30,6 +32,10 @@
   - userProfile
     - GET info of the logged in user for the year selected
     - GET the info of all users the logged-in user is approver of
+- Filtering / Validation:
+  - fetch only the data of a particular company
+  - fetch the data of the employees whose approver is either the same as the logged in user or the logged-in user
+  - test what happens if we have 2 companies 
 
 
 # ...................................................................

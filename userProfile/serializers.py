@@ -1,56 +1,58 @@
 from rest_framework import serializers
 from .models import UserProfile
-from customUser.serializers import CustomUserSerializerPrivate
-
-
-#from ..customUser.serializers import CustomUserSerializerPrivate
-
 
 # other serializers for other fields
-#from companiesProfile.serializers import CompaniesProfileSerializer
-#from customUser.serializers import CustomUserSerializerPrivate
-
+from customUser.serializers import CustomUserSerializerPrivate
+from companiesProfile.serializers import CompaniesProfileSerializer
+from department.serializers import DepartmentSerializer
 
 # get custom model
 # customUser = get_user_model()
 
+
+#  ..........................................................
+# this serializer below is needed to fetch the data of the approver
+class UserProfileSerializerByApprover(serializers.ModelSerializer):
+    # nest here from CustomUser: first_name, last_name
+    customUser = CustomUserSerializerPrivate(read_only=True)
+    class Meta:
+        model = UserProfile
+        fields = [ 'customUser' ]
+
+
 # ..........................................................
 class UserProfileSerializerAll(serializers.ModelSerializer):
 
-    # nest here from CustomUser: first_name, last_name
-    # nest here from companiesProfile: nameCompany
-    # nest here from department: nameDepartment
-    # nest from UserProfile: first_name e last_name of the approver
+    # nest here from CustomUser: first_name, last_name -> DONE
+    # nest here from companiesProfile: nameCompany -> DONE
+    # nest here from department: nameDepartment -> DONE
+    # nest from UserProfile: first_name e last_name of the approver -> DONE
 
-    #  company_data = CompaniesProfileSerializer(read_only=True)
-    #  userId = CustomUserSerializerPrivate(read_only=True)
-    requester_data = CustomUserSerializerPrivate(read_only=True)
-    #  userId = CustomUserSerializerPrivate(read_only=True)
+    # NB: in order for it to work we need the SAME NAMES as one of the fields
+    customUser = CustomUserSerializerPrivate(read_only=True)
+    company = CompaniesProfileSerializer(read_only=True)
+    department = DepartmentSerializer(read_only=True)
+    approver = UserProfileSerializerByApprover(read_only=True)  #  test
 
     class Meta:
         model = UserProfile
-        #  fields = '__all__'
-        #  fields = ['id', 'customUser', 'requester_data', 'approver', 'company', 'company_data' ]
-        fields = ['id', 'customUser', 'requester_data', 'approver', 'company']
-        #  fields = ['id', 'customUser', 'userId', 'approver', 'company']
-
-
+        fields = ['id', 'customUser', 'approver', 'company', 'department', 'birthdayDate', 'firstDayAtWork', 'gender']
 
 
 #  ..........................................................
-# this serializer below is needed to fetch the data of the requester of
+# this serializer below is needed to fetch the data of the approver of
 # AbsenceRequest and TrainingRequest
+# MAYBE NOT NEEDED
 class UserProfileSerializerByRequester(serializers.ModelSerializer):
 
+    #pass
+
+    """
     # nest here from CustomUser: first_name, last_name
-    # nest here from companiesProfile: nameCompany
-    # nest here from department: nameDepartment
-    # nest from UserProfile: first_name e last_name of the approver
-
-
+    customUser = CustomUserSerializerPrivate(read_only=True)
+    """
 
     class Meta:
         model = UserProfile
         #fields = '__all__'
-        fields = ('approver', 'company', 'department', 'customUser')
-
+        fields = [ 'id' ]
