@@ -12,7 +12,7 @@ from companiesProfile.models import CompaniesProfile
 class UserProfile(models.Model):
     id = models.AutoField(primary_key=True)
 
-    customUser = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE)
+    customUser = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE, related_name='userProfile')
 
     birthdayDate = models.DateField(blank=True, null=True)
     firstDayAtWork = models.DateField(blank=True, null=True)

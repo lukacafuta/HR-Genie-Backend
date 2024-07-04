@@ -40,13 +40,19 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    # absence
+    path('absence/', include('absenceRequests.urls')),
+
+    # users
+    path('users/', include('userProfile.urls')),
+
 # +++ JWT
 #     path('api/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
 #     path('api/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 #     path('api/auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_refresh'),
 # ... JWT
 
-# +++ SWAGGER
-#     path('backend/api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-# ... SWAGGER
+    # +++ SWAGGER
+    path('backend/api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    # ... SWAGGER
 ]
