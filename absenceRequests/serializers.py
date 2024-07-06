@@ -19,8 +19,9 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
     class Meta:
         model = AbsenceRequest
         fields = ['requesterData', 'id', 'requester', 'startDt',
-                  'endDt', 'reason', 'status'
+                  'endDt', 'reason', 'status', 'dtCreated', 'dtUpdated'
                   ]
+        read_only_fields = ['requester'] # cannot be modified
         #fields = '__all__'
         #fields.append('userData')  # does not work
         # why is userData not printer???
