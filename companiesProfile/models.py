@@ -9,3 +9,6 @@ class CompaniesProfile(models.Model):
     # companyLogoId =
 
     # join to user in the UserProfile -> many is there
+
+    def __str__(self):
+        return self.companyName

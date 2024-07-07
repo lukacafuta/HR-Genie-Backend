@@ -6,3 +6,6 @@ class Department(models.Model):
     nameDepartment = models.CharField(max_length=100)
 
     # link to User in the user: many there
+
+    def __str__(self):
+        return self.nameDepartment
