@@ -1,9 +1,10 @@
 from django.db import models
 
+
 # Create your models here.
 class CompaniesProfile(models.Model):
-    id = models.AutoField(primary_key=True)
 
+    id = models.AutoField(primary_key=True)
     companyName = models.CharField(max_length=100)
     # link to media
     # companyLogoId =

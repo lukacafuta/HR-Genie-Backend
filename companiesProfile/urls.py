@@ -1,8 +1,8 @@
 from django.urls import path
 
-from companiesProfile.views import CompaniesProfileDetail, UserCompanyProfile
+from companiesProfile.views import UserCompanyProfileView, CompaniesProfileUpdateView
 
 urlpatterns = [
-    path('my-company/', UserCompanyProfile.as_view()),
-    path('<int:pk>/',  CompaniesProfileDetail.as_view()),
+    path('user-company/', UserCompanyProfileView.as_view()),
+    path('update-company/<int:pk>/',  CompaniesProfileUpdateView.as_view()),
 ]

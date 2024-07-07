@@ -5,12 +5,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from companiesProfile.models import CompaniesProfile
+from companiesProfile.permissions import IsCompanyAdmin
 from companiesProfile.serializers import CompaniesProfileSerializer
 from userProfile.models import UserProfile
 
 
 # Create your views here.
-class UserCompanyProfile(APIView):
+class UserCompanyProfileView(APIView):
+    """
+    Retrieve the info of the company of the logged-in user
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -20,18 +24,10 @@ class UserCompanyProfile(APIView):
         return Response(serializer.data)
 
 
-class IsCompanyAdmin:
-    def has_permission(self, request, view):
-        company_id = view.kwargs.get('pk')
-        company = get_object_or_404(CompaniesProfile, pk=company_id)
-        try:
-            user_profile = UserProfile.objects.get(customUser=request.user, company=company)
-            return user_profile.isCompanyAdmin
-        except UserProfile.DoesNotExist:
-            return False
-
-
-class CompaniesProfileDetail(APIView):
+class CompaniesProfileUpdateView(APIView):
+    """
+    Edit company info (only by company admin)
+    """
     permission_classes = [IsAuthenticated, IsCompanyAdmin]
 
     def patch(self, request, pk, format=None):

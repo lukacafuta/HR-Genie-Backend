@@ -49,6 +49,9 @@ urlpatterns = [
     # company
     path('companies/', include('companiesProfile.urls')),
 
+    # department
+    path('departments/', include('department.urls')),
+
     # +++ JWT
     path('api/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
