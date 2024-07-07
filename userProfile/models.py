@@ -38,4 +38,5 @@ class UserProfile(models.Model):
 
     isCompanyAdmin = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return f'{self.customUser.username}'
