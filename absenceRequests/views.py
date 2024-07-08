@@ -11,7 +11,7 @@ from userProfile.models import UserProfile
 #from customUser import CustomUser  # to filter id
 
 # serializers
-from .serializers import AbsenceSerializerAll
+from .serializers import AbsenceSerializerAll, AbsenceSerializerManager
 
 # Create your views here.
 
@@ -300,8 +300,13 @@ class ModifyAbsenceManagerMyTeamView(GenericAPIView):
         # if self.request.method == 'GET':
         #    return CustomUserSerializerPrivate  # private info
         # return CustomUserSerializerPublic  # PATCH -> only public patch according to the specifics
-        return AbsenceSerializerAll  # simple by now
+        #return AbsenceSerializerAll  # simple by now
+        return AbsenceSerializerManager
+        # we use a different serializer for the patch
 
+
+
+    # do I need this???
     def get_queryset(self):
         # I want the entries of userProfile whose customUser_id = id of the CustomUser
         # get id of CustomUser where username=self.request.user
@@ -334,20 +339,23 @@ class ModifyAbsenceManagerMyTeamView(GenericAPIView):
     def patch(self, request, *args, **kwargs):
         """
             The manager (approver) can modify only the status of the absences, not the other fields
-            This operation uses the primary key of AbsenceRequest as pk in the URL
+            This operation uses the primary key of AbsenceRequest as pk in the URL.
+            The absenceRequests modifiable are the ones selected by the method get_query and are already
+            only the ones that the approver can approve.
 
-            TODO:
-            - add validation: change only field status and not the other fields
-            - add validation: change only the status of my team
-            - add validation: cannot change the status of sick_leave
+            Validations done:
+            - the approver cannot change the status of the Sick Leave (it is approved automatically)
+            - only the status can be changed, the other fields are ignored without a warning
 
         """
         # get the object
-        instance = self.get_object()  # a single object
+        instance = self.get_object()  # a single object: focusing on pk implicit
         # get the new quality via the serializer
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         # validate: TODO: need to change here???
         serializer.is_valid(raise_exception=True)
         # update the data into the DB
         serializer.save()
+        # return
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
