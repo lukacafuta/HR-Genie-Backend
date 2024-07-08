@@ -21,7 +21,7 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
         fields = ['requesterData', 'id', 'requester', 'startDt',
                   'endDt', 'reason', 'status', 'dtCreated', 'dtUpdated'
                   ]
-        read_only_fields = ['requester'] # cannot be modified
+        read_only_fields = ['requester', 'status']  # cannot be modified
         #fields = '__all__'
         #fields.append('userData')  # does not work
         # why is userData not printer???
@@ -29,4 +29,8 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
         # test for debugging
         #depth = 1
 
+    def validate(self, data):
+        if data['startDt'] >= data['endDt']:
+            raise serializers.ValidationError("startDt must occur before endDt")
+        return data
 
