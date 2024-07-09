@@ -43,6 +43,9 @@ urlpatterns = [
     # absence
     path('absences/', include('absenceRequests.urls')),
 
+    # trainings
+    path('trainings/', include('trainingRequests.urls')),
+
     # users
     path('users/', include('userProfile.urls')),
 
