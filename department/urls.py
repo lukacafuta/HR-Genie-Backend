@@ -1,8 +1,9 @@
 from django.urls import path
 
-from department.views import UserDepartmentView, DepartmentUpdateView
+from department.views import UserDepartmentView, ListCreateDepartmentsView, RetrieveUpdateDeleteDepartmentsView
 
 urlpatterns = [
-    path('user-department/', UserDepartmentView.as_view()),
-    path('update-department/<int:pk>/', DepartmentUpdateView.as_view()),
+    path('', ListCreateDepartmentsView.as_view()),
+    path('<int:pk>/', RetrieveUpdateDeleteDepartmentsView.as_view()),
+    path('me/', UserDepartmentView.as_view()),
 ]

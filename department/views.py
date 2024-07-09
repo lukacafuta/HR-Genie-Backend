@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import status
+from rest_framework import status, generics
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,16 +25,25 @@ class UserDepartmentView(APIView):
         return Response(serializer.data)
 
 
-class DepartmentUpdateView(APIView):
-    """
-    Edit department info (only by company admin)
-    """
-    permission_classes = [IsAuthenticated, IsCompanyAdmin]
+class ListCreateDepartmentsView(ListCreateAPIView):
 
-    def patch(self, request, pk, format=None):
-        department = get_object_or_404(Department, pk=pk)
-        serializer = DepartmentSerializer(department, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    """
+    GET: List all departments (company admin)
+    POST: Create a new department (company admin)
+    """
+
+    permission_classes = [IsAuthenticated, IsCompanyAdmin]
+    serializer_class = DepartmentSerializer
+    queryset = Department.objects.all()
+
+
+class RetrieveUpdateDeleteDepartmentsView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a single department by ID (company admin)
+    PATCH: Update a single department by ID (company admin)
+    DELETE: Delete single department by ID (company admin)
+    """
+
+    permission_classes = [IsAuthenticated, IsCompanyAdmin]
+    serializer_class = DepartmentSerializer
+    queryset = Department.objects.all()
