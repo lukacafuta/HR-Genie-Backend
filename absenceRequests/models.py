@@ -8,12 +8,19 @@ class AbsenceRequest(models.Model):
     id = models.AutoField(primary_key=True)
 
     # TODO:
-    requester = models.ForeignKey(to=UserProfile, related_name='absenceRequest', on_delete=models.CASCADE, default=1)
+    requester = models.ForeignKey(to=UserProfile, related_name='absenceRequest_related', on_delete=models.CASCADE, default=1)
 
     startDt = models.DateTimeField()
     endDt = models.DateTimeField()
 
-    reason = models.CharField(max_length=300)
+    ABSENCE_REASONS = [
+        ('vacation', 'Vacation'),
+        ('sick_leave', 'Sick Leave'),
+    ]
+
+    #reason = models.CharField(max_length=300)
+    reason =  models.CharField(max_length=11, choices=ABSENCE_REASONS, default='vacation')
+
 
     STATUS_APPROVAL = [
         ('pending', 'Pending'),

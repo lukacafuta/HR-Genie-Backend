@@ -41,7 +41,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # absence
-    path('absence/', include('absenceRequests.urls')),
+    path('absences/', include('absenceRequests.urls')),
+
+    # trainings
+    path('trainings/', include('trainingRequests.urls')),
 
     # users
     path('users/', include('userProfile.urls')),
@@ -59,6 +62,11 @@ urlpatterns = [
     path('api/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_verify'),
+    # ... JWT
+    # +++ JWT
+    path('auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_refresh'),
     # ... JWT
 
     # +++ SWAGGER

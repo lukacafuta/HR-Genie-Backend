@@ -1,25 +1,59 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+#from drf_yasg.openapi import Response
+from rest_framework.response import Response
+from rest_framework.generics import ListAPIView, GenericAPIView
 
 from .models import UserProfile
 from rest_framework import generics, status
 
+from .models import UserProfile, CustomUser
 from .serializers import UserProfileSerializerAll
+
 
 # Create your views here.
 
-#GET the list of ALL users
-#class UserProfileGetAll(generics.RetrieveAPIView):
-    #lookup_field = 'pk'
-
-class UserProfileGetAll(generics.ListAPIView):
+# ...........................................................................
+class UserProfileGetAll(ListAPIView):
 #class UserProfileGetAll(generics.ListCreateAPIView):
     """
     Retrieve the list of ALL UserProfiles
     """
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializerAll
+
+
+# ...........................................................................
+class ListUserProfileMeView(GenericAPIView):
+    """
+    Retrieve the information of the logged-in user
+    """
+
+    # define serializer for special cases
+    def get_serializer_class(self): # serializer or serializer_class?
+        #if self.request.method == 'GET':
+        #    return CustomUserSerializerPrivate  # private info
+        #return CustomUserSerializerPublic  # PATCH -> only public patch according to the specifics
+        return UserProfileSerializerAll
+
+    # filter the logged in user
+    def get_queryset(self):
+        # I want the entries of userProfile whose cutomUser_id = id of the CustomUser
+        # get id of CustomUser where username=self.request.user
+        id_CustomUserHere = self.request.user.id
+        pass
+        # return the entries of the UserProfile whose customUser_id is = this above
+        return UserProfile.objects.filter(customUser_id=id_CustomUserHere)
+        #return UserProfile.objects.all()  # test
+
+
+    # GET method
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True) # need to put many=True for it to work: boh
+        #serializer_class = UserProfileSerializerAll # with this it does not work
+        return Response(serializer.data) # here it sees no data
 
 
 class UserProfileByApproverView(generics.ListAPIView):
