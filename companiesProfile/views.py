@@ -44,4 +44,3 @@ class RetrieveUpdateDeleteCompaniesProfileView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCompanyAdmin]
     serializer_class = CompaniesProfileSerializer
     queryset = CompaniesProfile.objects.all()
-
