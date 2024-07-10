@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from timeDependentVar.serializers import TimeDependentVarSerializer
 from .models import UserProfile
 
 # other serializers for other fields
@@ -33,10 +35,11 @@ class UserProfileSerializerAll(serializers.ModelSerializer):
     company = CompaniesProfileSerializer(read_only=True)
     department = DepartmentSerializer(read_only=True)
     approver = UserProfileSerializerByApprover(read_only=True)  #  test
+    timeDepVars = TimeDependentVarSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ['id', 'customUser', 'approver', 'company', 'department', 'birthdayDate', 'firstDayAtWork', 'gender']
+        fields = ['id', 'customUser', 'approver', 'company', 'department', 'birthdayDate', 'firstDayAtWork', 'gender', 'timeDepVars']
 
 
 #  ..........................................................

@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import UserProfile
-from rest_framework import generics
+from rest_framework import generics, status
 
 from .serializers import UserProfileSerializerAll
 
@@ -23,7 +24,7 @@ class UserProfileGetAll(generics.ListAPIView):
 
 class UserProfileByApproverView(generics.ListAPIView):
     """
-    Retrieve the list of all UserProfiles where the logged-in user is approver
+    List all UserProfiles where the logged-in user is approver of
     """
     serializer_class = UserProfileSerializerAll
     permission_classes = [IsAuthenticated]
@@ -32,3 +33,13 @@ class UserProfileByApproverView(generics.ListAPIView):
         user = self.request.user
         return UserProfile.objects.filter(approver__customUser=user)
 
+
+class UserProfileDetailView(generics.RetrieveAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializerAll
+    lookup_field = 'customUser__username'
+
+    def get(self, request, *args, **kwargs):
+        user_profile = self.get_object()
+        serializer = self.get_serializer(user_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
