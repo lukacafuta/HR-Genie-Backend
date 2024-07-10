@@ -27,23 +27,33 @@ class UserDepartmentView(APIView):
 
 class ListCreateDepartmentsView(ListCreateAPIView):
 
-    """
-    GET: List all departments (company admin)
-    POST: Create a new department (company admin)
-    """
-
     permission_classes = [IsAuthenticated, IsCompanyAdmin]
     serializer_class = DepartmentSerializer
     queryset = Department.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        """List all departments (company admin)"""
+        return super().list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Create a new department (company admin)"""
+        return super().create(request, *args, **kwargs)
 
 
 class RetrieveUpdateDeleteDepartmentsView(RetrieveUpdateDestroyAPIView):
-    """
-    GET: Retrieve a single department by ID (company admin)
-    PATCH: Update a single department by ID (company admin)
-    DELETE: Delete single department by ID (company admin)
-    """
 
     permission_classes = [IsAuthenticated, IsCompanyAdmin]
     serializer_class = DepartmentSerializer
     queryset = Department.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        """Retrieve a single department by ID (company admin)"""
+        return super().retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """Update a single department by ID (company admin)"""
+        return super().partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """Delete a single department by ID (company admin)"""
+        return super().destroy(request, *args, **kwargs)
