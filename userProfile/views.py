@@ -33,13 +33,3 @@ class UserProfileByApproverView(generics.ListAPIView):
         user = self.request.user
         return UserProfile.objects.filter(approver__customUser=user)
 
-
-class UserProfileDetailView(generics.RetrieveAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializerAll
-    lookup_field = 'customUser__username'
-
-    def get(self, request, *args, **kwargs):
-        user_profile = self.get_object()
-        serializer = self.get_serializer(user_profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
