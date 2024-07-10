@@ -1,8 +1,10 @@
 from django.urls import path
 
-from companiesProfile.views import UserCompanyProfileView, CompaniesProfileUpdateView
+from companiesProfile.views import UserCompanyProfileView, RetrieveUpdateDeleteCompaniesProfileView, \
+    ListCreateCompaniesProfileView
 
 urlpatterns = [
-    path('user-company/', UserCompanyProfileView.as_view()),
-    path('update-company/<int:pk>/',  CompaniesProfileUpdateView.as_view()),
+    path('', ListCreateCompaniesProfileView.as_view()),
+    path('<int:pk>/',  RetrieveUpdateDeleteCompaniesProfileView.as_view()),
+    path('me/', UserCompanyProfileView.as_view()),
 ]

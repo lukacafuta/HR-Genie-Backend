@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,16 +25,23 @@ class UserCompanyProfileView(APIView):
         return Response(serializer.data)
 
 
-class CompaniesProfileUpdateView(APIView):
+class ListCreateCompaniesProfileView(ListCreateAPIView):
     """
-    Edit company info (only by company admin)
+    GET: List all company profiles (company admin)
+    POST: Create a new company profile (company admin)
     """
     permission_classes = [IsAuthenticated, IsCompanyAdmin]
+    serializer_class = CompaniesProfileSerializer
+    queryset = CompaniesProfile.objects.all()
 
-    def patch(self, request, pk, format=None):
-        company = get_object_or_404(CompaniesProfile, pk=pk)
-        serializer = CompaniesProfileSerializer(company, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RetrieveUpdateDeleteCompaniesProfileView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a single company profile by ID (company admin)
+    PATCH: Update a single company profile by ID (company admin)
+    DELETE: Delete a single company profile by ID (company admin)
+    """
+    permission_classes = [IsAuthenticated, IsCompanyAdmin]
+    serializer_class = CompaniesProfileSerializer
+    queryset = CompaniesProfile.objects.all()
+
