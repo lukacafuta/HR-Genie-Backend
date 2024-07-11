@@ -49,10 +49,25 @@ urlpatterns = [
     # users
     path('users/', include('userProfile.urls')),
 
+    # company
+    path('companies/', include('companiesProfile.urls')),
+
+    # department
+    path('departments/', include('department.urls')),
+
+    # time dependent variables
+    path('timedepvar/', include('timeDependentVar.urls')),
+
+    # +++ JWT
+    # path('api/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_verify'),
+    # ... JWT
+
     # +++ JWT
     path('auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_refresh'),
+    path('auth/token/verify/',  jwt_views.TokenVerifyView.as_view(), name='token_verify'),
     # ... JWT
 
     # +++ SWAGGER

@@ -1,7 +1,12 @@
 from django.shortcuts import render
-#from drf_yasg.openapi import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+#from drf_yasg.openapi import Response
+#from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, GenericAPIView
+
+#from .models import UserProfile
+from rest_framework import generics, status
 
 from .models import UserProfile, CustomUser
 from .serializers import UserProfileSerializerAll
@@ -49,4 +54,16 @@ class ListUserProfileMeView(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True) # need to put many=True for it to work: boh
         #serializer_class = UserProfileSerializerAll # with this it does not work
         return Response(serializer.data) # here it sees no data
+
+
+class UserProfileByApproverView(generics.ListAPIView):
+    """
+    List all UserProfiles where the logged-in user is approver of
+    """
+    serializer_class = UserProfileSerializerAll
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return UserProfile.objects.filter(approver__customUser=user)
 
