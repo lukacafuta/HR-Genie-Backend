@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import UserProfileGetAll, UserProfileByApproverView
-from .views import UserProfileGetAll, ListUserProfileMeView
+#from .views import UserProfileGetAll, UserProfileByApproverView
+from .views import UserProfileGetAll, ListUserProfileMeView, UserProfileByApproverView
 
 urlpatterns = [
     path('', UserProfileGetAll.as_view()),
