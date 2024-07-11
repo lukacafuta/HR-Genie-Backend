@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 #from drf_yasg.openapi import Response
-from rest_framework.response import Response
+#from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, GenericAPIView
 
-from .models import UserProfile
+#from .models import UserProfile
 from rest_framework import generics, status
 
 from .models import UserProfile, CustomUser
