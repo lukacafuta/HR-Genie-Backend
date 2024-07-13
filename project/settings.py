@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
+import dj_database_url
+
 #from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -95,17 +98,24 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+SERVER_TYPE = os.environ.get('SERVER_TYPE', 'development')
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get('POSTGRES_DB'),
-        "PORT": os.environ.get('POSTGRES_PORT'),
-        "HOST": os.environ.get('POSTGRES_HOST'),
-        "USER": os.environ.get('POSTGRES_USER'),
-        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
+if SERVER_TYPE == 'development':
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.environ.get('POSTGRES_DB'),
+            "PORT": os.environ.get('POSTGRES_PORT'),
+            "HOST": os.environ.get('POSTGRES_HOST'),
+            "USER": os.environ.get('POSTGRES_USER'),
+            "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
+        }
     }
-}
+
+if SERVER_TYPE == 'production':
+    DATABASES = {
+        'default': dj_database_url.config()
+    }
 
 # print(os.environ.get('POSTGRES_DB'))
 # print(os.environ.get('POSTGRES_PORT'))
