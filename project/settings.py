@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-1!gbckk=*wngr+uzvcq@mi*w67r#aekwzf4ypeu_2h%861cmyk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['hr-genie-backend.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['hr-genie-backend-24b07ef76680.herokuapp.com', 'localhost']
 
 # Application definition
 
