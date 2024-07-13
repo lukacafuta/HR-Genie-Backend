@@ -9,17 +9,14 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import ast
 import os
 from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
 
-#from dotenv import load_dotenv
 
-# Load environment variables from .env file
-#load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-1!gbckk=*wngr+uzvcq@mi*w67r#aekwzf4ypeu_2h%861cmyk"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DJANGO_DEBUG = ast.literal.eval(os.environ.get("DJANGO_DEBUG", True))
 
 ALLOWED_HOSTS = ['hr-genie-backend-24b07ef76680.herokuapp.com', 'localhost']
 
