@@ -159,8 +159,19 @@ STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SPACES = os.getenv('SERVER_TYPE') == 'production'
+
+if SPACES:
+    # production settings here
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK
+    AWS_ACCESS_KEY_ID = os.environ.get('DO_SPACES_ACCESS_KEY')  # Spaces access key
+    AWS_SECRET_ACCESS_KEY = os.environ.get('DO_SPACES_SECRET')  # Spaces access secret
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('DO_SPACES_SPACE_NAME')  # Name of the space
+    AWS_S3_ENDPOINT_URL = os.environ.get('DO_SPACES_ENDPOINT')  # Endpoint found under Spaces/<your-space>/Settings
+    MEDIA_URL = 'https://hr-genie-spaces.fra1.digitaloceanspaces.com/media/'  # Full url displayed in Spaces
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
