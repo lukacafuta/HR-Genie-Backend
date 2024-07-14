@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # frameworks
     "rest_framework",
     "drf_yasg",
+    "corsheaders",
 
     # apps
     "companiesProfile",
@@ -63,6 +64,7 @@ AUTH_USER_MODEL = "customUser.CustomUser"   # name of the App. name of the model
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",   # added whitenoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -208,6 +210,12 @@ SWAGGER_SETTINGS = {
 }
 # ... SWAGGER
 
+CORS_ALLOWED_ORIGINS = [
+    # "https://example.com",
+    # "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:8000",
+]
 
 # +++ EMAIL
 # DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
