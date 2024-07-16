@@ -31,7 +31,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DJANGO_DEBUG = ast.literal_eval(os.environ.get("DJANGO_DEBUG", True))
 
-ALLOWED_HOSTS = ['hr-genie-backend-24b07ef76680.herokuapp.com', 'localhost']
+DEBUG = DJANGO_DEBUG # added to make it clear
+
+ALLOWED_HOSTS = ['hr-genie-backend-24b07ef76680.herokuapp.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -121,6 +123,7 @@ if SERVER_TYPE == 'production':
 # print(os.environ.get('POSTGRES_HOST'))
 # print(os.environ.get('POSTGRES_USER'))
 # print(os.environ.get('POSTGRES_PASSWORD'))
+# print(os.environ.get('DJANGO_DEBUG'))
 
 
 # Password validation
@@ -172,7 +175,7 @@ if SPACES:
     AWS_S3_ENDPOINT_URL = os.environ.get('DO_SPACES_ENDPOINT')  # Endpoint found under Spaces/<your-space>/Settings
     MEDIA_URL = 'https://hr-genie-spaces.fra1.digitaloceanspaces.com/media/'  # Full url displayed in Spaces
 else:
-    MEDIA_URL = '/media/'
+    MEDIA_URL = 'media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
