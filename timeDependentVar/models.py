@@ -2,6 +2,7 @@ from django.db import models
 
 from userProfile.models import UserProfile
 
+# from jsonfield import JSONField  # testing for a json field
 
 # Create your models here.
 class TimeDependentVar(models.Model):
@@ -14,11 +15,14 @@ class TimeDependentVar(models.Model):
         ('nr_tot_vacation_days', 'Total Vacation Days'),
         ('pensum_perc', 'Pensum %'),
         ('maternity_leave', 'Maternity Leave'),
-        ('nr_working_hours_per_week', 'Working Hours per Week')
+        ('nr_working_hours_per_week', 'Working Hours per Week'),
+        # ('variousJSON', 'Various JSON'),  # added as test
     ]
     variable = models.CharField(max_length=25, choices=POSSIBLE_VAR, default='nr_tot_vacation_days')
 
     value = models.FloatField() # done as float temporarily
+
+    # value_json = JSONField()  # insert various values here
 
     # link to user profile: here it is many
     user = models.ForeignKey(to=UserProfile, related_name='timeDepVars', on_delete=models.CASCADE, default=1)

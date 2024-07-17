@@ -13,6 +13,9 @@ from userProfile.models import UserProfile
 # serializers
 from .serializers import AbsenceSerializerAll, AbsenceSerializerManager
 
+# to do operations for the calculations of the duration
+from datetime import datetime, date, timedelta
+
 # Create your views here.
 
 # ..........................................................
@@ -100,8 +103,6 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
         # check the data
         serializer.is_valid(raise_exception=True)
 
-        #pass
-
         # put status = accepted if sick_leave, else pending
         # I need to put it here and not in the serializer bc the status does not get pushed
         # handle the case of reason not specified -> it is vacation
@@ -114,10 +115,131 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
             # if here -> reason is not specified -> it is vacation
             status_here = 'pending'
 
-        #pass
 
-        # do such that the requester id is the logged in user of UserProfile
-        serializer.save(requester_id=id_UserProfileHere, status=status_here)
+        # +++START compute duration
+        # compute the durationWorkHours and raise exceptions if needed
+
+        # take the data: now hard coded
+        now_nrHoursInFullDay = 8.0
+        now_workTime = { 'Monday':  {'startTime': '10:00', 'endTime': '17:00'},
+                        'Tuesday': {'startTime': '08:00', 'endTime': '17:00'},
+                        'Friday': {'startTime': '13:00', 'endTime': '15:00'},
+                      }
+
+
+        # day of the start and end
+        dt_start = serializer.validated_data['startDt']  # now it is a date
+        dt_end   = serializer.validated_data['endDt']  # now it is a date
+        # remove tz info -> else comparison max and min do not work
+        dt_start = dt_start.replace(tzinfo=None)
+        dt_end = dt_end.replace(tzinfo=None)
+
+        # make dates
+        day_start = dt_start.date()  # now it is a date
+        day_end = dt_end.date()
+        delta = timedelta(days=1)
+
+        # initialize duration
+        now_durationWorkHours = 0.0
+        now_durationWorkTimeFormatted = '-1d_-1h_-1m'  # put the default value
+
+        # loop on the day
+        # loop on the day
+        curr_date = day_start  # initialize
+        while curr_date <= day_end:
+            print('\n')
+            print(curr_date.strftime("%Y-%m-%d"))
+
+            # day of the week converted into name
+            curr_weekday = curr_date.strftime('%A')
+            print(curr_weekday)
+
+            # check what startTime and endTime today for work
+            try:
+                curr_workStartTime = now_workTime[curr_weekday]['startTime']
+                curr_workEndTime = now_workTime[curr_weekday]['endTime']
+                # print(curr_workStartTime, curr_workEndTime)
+                pass
+
+                # build dt of the start work today
+                curr_dtStart_string = curr_date.strftime('%Y-%m-%d') + ' ' + curr_workStartTime + ':00'
+                # print (curr_dtStart_string)
+                today_dtStartWork_dt = datetime.strptime(curr_dtStart_string, '%Y-%m-%d %H:%M:%S')
+                # print (curr_dtStart_dt)
+
+                curr_dtEnd_string = curr_date.strftime('%Y-%m-%d') + ' ' + curr_workEndTime + ':00'
+                today_dtEndWork_dt = datetime.strptime(curr_dtEnd_string, '%Y-%m-%d %H:%M:%S')
+
+                # print('Work times: ', today_dtStartWork_dt, ' -> ', today_dtEndWork_dt)
+                pass
+
+                # here we compute the start to consider
+                today_considerStart = max(dt_start, today_dtStartWork_dt)
+
+                # if (dt_start >= today_dtStartWork_dt):
+                #     today_considerStart = dt_start
+                # else:
+                #     today_considerStart = today_dtStartWork_dt
+
+                pass
+
+                # compute the end in this day
+                today_considerEnd = min(dt_end, today_dtEndWork_dt)
+                # if (dt_end <= today_dtEndWork_dt):
+                #     today_considerEnd = dt_end
+                # else:
+                #     today_considerEnd = today_dtEndWork_dt
+
+                # print('Consider today = ', today_considerStart, ' -> ', today_considerEnd)
+                pass
+
+                # compute the duration in this day
+                dur_today_hours = (today_considerEnd - today_considerStart).total_seconds() / 3600
+
+                # add to now_durationWorkHours
+                now_durationWorkHours += dur_today_hours
+
+
+            except:
+                #print('Not found start time')
+                pass
+
+            # go to next date
+            curr_date += delta
+
+
+        # print('\n***FINAL: total hours = ', now_durationWorkHours)
+        # here we have now_durationWorkHours for the entire period
+        pass
+
+        # format in formatted
+        here_intnr_days = int(now_durationWorkHours // now_nrHoursInFullDay)
+        here_hours_left = now_durationWorkHours - here_intnr_days * now_nrHoursInFullDay
+        here_inthours = int(here_hours_left)
+        here_int_minutes = int(round((here_hours_left - here_inthours) * 60, 1))
+        now_durationWorkTimeFormatted = f"{here_intnr_days}d_{here_inthours}h_{here_int_minutes}m"
+
+        # print('*** FINAL formatted = ', now_durationWorkTimeFormatted)
+        # print('MEMO: hours in a day = ', now_nrHoursInFullDay)
+
+        pass
+
+        # initialize
+        # now_durationWorkHours = 0.0
+
+
+
+        # format the duration as 3d_4h_15m -> durationWorkTimeFormatted
+
+        # ---END compute duration
+
+
+
+        # Push the data such that the requester id is the logged in user of UserProfile
+        serializer.save(requester_id=id_UserProfileHere, status=status_here,
+                        durationWorkHours=now_durationWorkHours,
+                        durationWorkTimeFormatted=now_durationWorkTimeFormatted
+                        )
 
         #pass
 
