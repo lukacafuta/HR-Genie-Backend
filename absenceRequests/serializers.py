@@ -6,7 +6,7 @@ from userProfile.serializers import UserProfileSerializerAll, UserProfileSeriali
 
 
 # ......................................................................................
-# this is only for GET
+# this is only for GET and for POST -> algorithm put in the View
 class AbsenceSerializerAll(serializers.ModelSerializer):
 
     # export also from UserProfile:
@@ -44,51 +44,6 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
         return data
 
         # check if durationWorkHour is > 0 and give feedback if wrong or in views??
-
-
-
-# # .....................................................................
-# # this below is only for POST: checks on the duration
-# class AbsenceSerializerAllPOST(serializers.ModelSerializer):
-#     # export also from UserProfile:
-#     # customUser id, company name, dept name, requester first_name and last_name, approver name and last name
-#     # userData = UserProfileSerializerAll(read_only=True) # many=True, read_only=True)
-#     # requester = UserProfileSerializerByRequester(read_only=True)  # many=True, read_only=True)
-#
-#     # maybe there is more than 1 join and does not know which to use
-#     # requester_id
-#
-#     class Meta:
-#         model = AbsenceRequest
-#         fields = ['id', 'requester',
-#                   'startDt', 'endDt',
-#                   'reason', 'status',
-#                   'durationWorkHours', 'durationWorkTimeFormatted',  # these are computed either in the view or in the serializer
-#                   'dtCreated', 'dtUpdated'
-#                   ]
-#         read_only_fields = ['requester', 'status',
-#                             'durationWorkHours', 'durationWorkTimeFormatted'  # they are computed
-#                             ]  # cannot be modified
-#         # fields = '__all__'
-#         # fields.append('userData')  # does not work
-#         # why is userData not printer???
-#
-#         # test for debugging
-#         # depth = 1
-#
-#
-#
-#
-#     def validate(self, data):
-#
-#         # check if start < end
-#         if data['startDt'] >= data['endDt']:
-#             raise serializers.ValidationError("startDt must occur before endDt")
-#         return data
-#
-#         # check if durationWorkHour is > 0 and give feedback if wrong
-#
-
 
 
 # ...............................................................................

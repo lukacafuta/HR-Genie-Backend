@@ -8,6 +8,7 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 # import models
 from .models import AbsenceRequest
 from userProfile.models import UserProfile
+from timeDependentVar.models import TimeDependentVar
 #from customUser import CustomUser  # to filter id
 
 # serializers
@@ -15,6 +16,10 @@ from .serializers import AbsenceSerializerAll, AbsenceSerializerManager
 
 # to do operations for the calculations of the duration
 from datetime import datetime, date, timedelta
+
+# to raise exceptions
+from django.http import HttpResponseServerError
+from django.core.exceptions import MultipleObjectsReturned # to check if got more objects with get -> timeDepVar day_Monday_startTime
 
 # Create your views here.
 
@@ -119,15 +124,96 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
         # +++START compute duration
         # compute the durationWorkHours and raise exceptions if needed
 
-        # take the data: now hard coded
-        now_nrHoursInFullDay = 8.0
-        now_workTime = { 'Monday':  {'startTime': '10:00', 'endTime': '17:00'},
-                        'Tuesday': {'startTime': '08:00', 'endTime': '17:00'},
-                        'Friday': {'startTime': '13:00', 'endTime': '15:00'},
-                      }
+        # ++START take the data of this user: now hard coded
+        # now_nrHoursInFullDay = 8.0
+        # now_workTime = { 'Monday':  {'startTime': '10:00', 'endTime': '17:00'},
+        #                 'Tuesday': {'startTime': '08:00', 'endTime': '17:00'},
+        #                 'Friday': {'startTime': '13:00', 'endTime': '15:00'},
+        #               }
+
+        pass
+        # take the entries of timeDependentVar model
+        # hard coded the year by now
+        list_tdVar = TimeDependentVar.objects.filter(user_id=id_UserProfileHere,
+                                                     startDate__year=2024, endDate__year=2024
+                                                     )
+        pass
 
 
-        # day of the start and end
+        # CHECK: add here a check if not found items of the selected user or if more than 1 is found
+        try:
+            # take the nr of working hours in a day -> get bc I know I have only 1
+            now_nrHoursInFullDay = float(list_tdVar.get(variable__exact='nr_working_hours_per_day_at100PercPensum').value)
+        except:
+            message = "PROBLEM in timeDependentVar for the current user: the variable nr_working_hours_per_day_at100PercPensum is either not found or is multiple for 2024"
+            #raise ValueError("PROBLEM in timeDependentVar for the current user: teh variable nr_working_hours_per_day_at100PercPensum is either not found or is multiple for 2024")
+            return HttpResponseServerError(f"Error: {message}")
+
+        pass
+
+        try:
+            # list with day_
+            list_day = list_tdVar.filter(variable__startswith='day_')
+            if not list_day.exists():
+                message = 'PROBLEM in timeDependentVar for the current user and 2024: there is no variable of the type day_Monday_timeStart => Add them by hand'
+                raise ValueError(message)
+        except Exception as e:
+            return HttpResponseServerError(f"Error: {e}")
+
+
+        # search by day and build the obj
+        now_workTime = {}
+
+        # start by startTime and search endTime for the day only where startTime is found
+        for loop_day in ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'):
+            here_var_start = 'day_' + loop_day + '_startTime'
+            pass
+            try:  # try is necessary, otherwise the get will get out
+                # ATTENTION: if more than 1 entry, this will be skipped
+                here_start = list_day.get(variable__exact=here_var_start).value  # here it is ok to skip if not found if not all days are present
+                pass
+                if len(here_start) > 0:
+                    # search for here_end
+                    here_var_end = 'day_' + loop_day + '_endTime'
+                    here_end = list_day.get(variable__exact=here_var_end).value  # here it is ok if not all days are present
+                    pass
+
+                    if (len(here_end) > 0):
+                        # add into the dictionary
+                        now_workTime[loop_day] = {'startTime': here_start, 'endTime': here_end}
+                        pass
+
+            # handle the case of multiple start of days found -> tell the Front End
+            except MultipleObjectsReturned:
+                # Handle the case where more than one item is found
+                message = f"ERROR: PROBLEM in timeDependentVar for the current user and 2024: a multiple entry of {here_var_start} is found -> FIX IT"
+                return HttpResponseServerError(message)
+
+            # # ok if entries not found, we can have only some days
+            # except:
+            #     pass
+
+            # if not found, it loops over the days
+
+        # here now_workTime is complete
+        pass
+
+        # check if it has some entries, else raise an exception
+        #now_workTime.clear() # test if exception is raised
+
+        try:
+            if (len(now_workTime) == 0):
+                raise ValueError("PROBLEM: There is no entry of the type day_Monday_startTime or day_Monday_endTime or they do not match for the current user and for the year considered in the table timeDependentVar: Populate it first")  # Example of raising a ValueError
+        except ValueError as e:
+            # Handle the exception and return a custom error response
+            return HttpResponseServerError(f"Error: {e}")
+
+        pass
+
+        # --END take the data of the user posting
+
+
+        # START CALC day of the start and end
         dt_start = serializer.validated_data['startDt']  # now it is a date
         dt_end   = serializer.validated_data['endDt']  # now it is a date
         # remove tz info -> else comparison max and min do not work
@@ -175,22 +261,10 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
 
                 # here we compute the start to consider
                 today_considerStart = max(dt_start, today_dtStartWork_dt)
-
-                # if (dt_start >= today_dtStartWork_dt):
-                #     today_considerStart = dt_start
-                # else:
-                #     today_considerStart = today_dtStartWork_dt
-
                 pass
 
                 # compute the end in this day
                 today_considerEnd = min(dt_end, today_dtEndWork_dt)
-                # if (dt_end <= today_dtEndWork_dt):
-                #     today_considerEnd = dt_end
-                # else:
-                #     today_considerEnd = today_dtEndWork_dt
-
-                # print('Consider today = ', today_considerStart, ' -> ', today_considerEnd)
                 pass
 
                 # compute the duration in this day
