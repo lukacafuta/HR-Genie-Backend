@@ -5,6 +5,8 @@ from .models import AbsenceRequest
 from userProfile.serializers import UserProfileSerializerAll, UserProfileSerializerByRequester
 
 
+# ......................................................................................
+# this is only for GET and for POST -> algorithm put in the View
 class AbsenceSerializerAll(serializers.ModelSerializer):
 
     # export also from UserProfile:
@@ -18,10 +20,15 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
 
     class Meta:
         model = AbsenceRequest
-        fields = ['id', 'requester', 'startDt',
-                  'endDt', 'reason', 'status', 'dtCreated', 'dtUpdated'
+        fields = ['id', 'requester',
+                  'startDt', 'endDt',
+                  'reason', 'status',
+                  'durationWorkHours', 'durationWorkTimeFormatted', # these are computed either in the view or in the serializer
+                  'dtCreated', 'dtUpdated'
                   ]
-        read_only_fields = ['requester', 'status']  # cannot be modified
+        read_only_fields = ['requester', 'status',
+                            'durationWorkHours', 'durationWorkTimeFormatted'  # uploaded in the phase of POST
+                            ]  # cannot be modified
         #fields = '__all__'
         #fields.append('userData')  # does not work
         # why is userData not printer???
@@ -30,11 +37,13 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
         #depth = 1
 
     def validate(self, data):
+
+        # check if start < end
         if data['startDt'] >= data['endDt']:
             raise serializers.ValidationError("startDt must occur before endDt")
         return data
 
-
+        # check if durationWorkHour is > 0 and give feedback if wrong or in views??
 
 
 # ...............................................................................
@@ -52,7 +61,7 @@ class AbsenceSerializerManager(serializers.ModelSerializer):
 
     class Meta:
         model = AbsenceRequest
-        fields = ['id', 'status', 'reason'] #, 'requester', 'reason']
+        fields = ['id', 'status', 'reason']  # , 'requester', 'reason']
         read_only_fields = ['reason']
         # read_only_fields = ['requester', 'reason', 'status']  # cannot be modified
         #fields = '__all__'

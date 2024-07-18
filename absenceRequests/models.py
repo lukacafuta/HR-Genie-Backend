@@ -29,6 +29,11 @@ class AbsenceRequest(models.Model):
     ]
     status = models.CharField(max_length=11, choices=STATUS_APPROVAL, default='pending')
 
+    # duration computed by the serializer
+    durationWorkHours = models.FloatField(default=-1.0)  # duration in hours as float: only the duration in the hours of work are considered
+    durationWorkTimeFormatted = models.CharField(max_length=30, default='-1d_-1h_-1m')  # duration in format 2d_3h_15m --> easy to display in front end
+
+
     # TODO: relate to the MediaLink table
     #attachmentsId =
 
