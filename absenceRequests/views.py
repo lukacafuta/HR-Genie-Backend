@@ -189,6 +189,9 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
                 message = f"ERROR: PROBLEM in timeDependentVar for the current user and 2024: a multiple entry of {here_var_start} is found -> FIX IT"
                 return HttpResponseServerError(message)
 
+            except:  # if not found it goes here
+                pass
+
             # # ok if entries not found, we can have only some days
             # except:
             #     pass
