@@ -214,8 +214,8 @@ SWAGGER_SETTINGS = {
 # ... SWAGGER
 
 CORS_ALLOWED_ORIGINS = [
-    # "https://example.com",
-    # "https://sub.example.com",
+    "https://hr-genie.netlify.app/",
+    "http://localhost:5173",
     "http://localhost:8080",
     "http://127.0.0.1:8000",
 ]
