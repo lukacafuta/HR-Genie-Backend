@@ -9,10 +9,13 @@ from rest_framework.generics import GenericAPIView
 from absenceRequests.models import AbsenceRequest
 from userProfile.models import UserProfile
 from timeDependentVar.models import TimeDependentVar
+from trainingRequests.models import TrainingRequest
+
 
 # import serializers needed
 from absenceRequests.serializers import AbsenceSerializerAll, AbsenceSerializerManager
 from userProfile.serializers import UserProfileSerializerAll
+from trainingRequests.serializers import TrainingSerializerEmployee
 
 
 # to raise exceptions
@@ -58,9 +61,21 @@ class ComputeKpiYearlyMe(GenericAPIView):
         return Response(serializer.data)  # here it sees no data
 
 
+    # .....................................................................
+    # fz to get the list of training requests for the logged in user
+    def get_serializer_training_class(self):
+        return TrainingSerializerEmployee
 
-
-
+    def get_training_requests(self):
+        # TODO: select only the year
+        # can I get the list of the users I want?
+        id_CustomUserHere = self.request.user.id
+        # get the id in UserProfile with this customUser_id
+        id_UserProfileHere = UserProfile.objects.get(customUser_id=id_CustomUserHere).id
+        queryset = TrainingRequest.objects.filter(requester_id=id_UserProfileHere)  # TODO: add here the requests in the year
+        serializer_class = self.get_serializer_training_class()  # declare the class: needs to be done before
+        serializer = serializer_class(queryset, many=True)  # need to put many=True for it to work: boh
+        return Response(serializer.data)  # here it sees no data
 
     # ................................................................
     # # define serializer for special cases
@@ -112,6 +127,9 @@ class ComputeKpiYearlyMe(GenericAPIView):
         # vector: I take the first entry: only 1
         data_absence_requests = self.get_absence_requests().data
 
+        # get the list of the training requests
+        data_training_requests = self.get_training_requests().data
+
         pass
 
         # final_data: all same users -> sum on all
@@ -134,7 +152,6 @@ class ComputeKpiYearlyMe(GenericAPIView):
 
             # list of absence with requester.id = same here
             selected_absence = [abs for abs in data_absence_requests if abs['requester']['id'] == now_userProfile_id]
-            #pass
 
             # sum of the duration of the absence requests selected grouped by
             # list of unique cases of reason/status
@@ -154,10 +171,31 @@ class ComputeKpiYearlyMe(GenericAPIView):
 
             # here we have absence_grouped_duration_hours complete
 
+            # list of trainings with requester.id = same here
+            selected_training = [trai for trai in data_training_requests if
+                                 trai['requester']['id'] == now_userProfile_id]
+
+            # nr of trainings grouped by statusApproval / statusAdvancement
+            training_grouped_nr_courses = {}
+            # Iterate through each record
+            for now_trai in selected_training:
+                # Create a key from the category and region
+                key = 'training_nr_courses__' + now_trai["statusApproval"] + '/' + now_trai["statusAdvancement"]
+
+                # If the key is not in the dictionary, add it with a value of 0
+                if key not in training_grouped_nr_courses:
+                    training_grouped_nr_courses[key] = 0
+
+                # Add the sales value to the corresponding key in the dictionary
+                training_grouped_nr_courses[key] += 1
+
+            # here we have training_grouped_nr_courses complete
+
             pass
 
             # save all the variables in final_data
             now_dict = {
+                'year' : 2024,  #year_chosen,
                 'user_profile_id': now_userProfile_id,
                 'user_name': now_username,
                 'user_firstname': now_firstname,
@@ -165,9 +203,11 @@ class ComputeKpiYearlyMe(GenericAPIView):
                 'user_customuser_id': now_customuser_id,
                 'nr_tot_vacation_days': now_tot_vacation_days,
                 'nr_tot_vacation_hours': now_tot_vacation_hours,
+                'nr_working_h_per_day_100perc_pensum': now_nr_working_h_per_day_100perc_pensum,
             }
             # append the entries of the dictionaries
             now_dict.update(absence_grouped_duration_hours)
+            now_dict.update(training_grouped_nr_courses)
 
             # final data
             final_data.append(now_dict)
