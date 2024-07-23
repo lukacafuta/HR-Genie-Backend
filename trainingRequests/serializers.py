@@ -2,11 +2,18 @@ from rest_framework import serializers
 from .models import TrainingRequest  # import the model here
 
 
+# import UserProfile to get all the info of the user and manager
+from userProfile.serializers import UserProfileSerializerAll, UserProfileSerializerByRequester
+
+
 # ........................................................................
 """
     This is to be used by the employee sending the request of the training
 """
 class TrainingSerializerEmployee(serializers.ModelSerializer):
+
+    # overwrite the serializer: nested serializer
+    requester = UserProfileSerializerAll(read_only=True)
 
     class Meta:
         # look at the CustomUser model and give me all the fields

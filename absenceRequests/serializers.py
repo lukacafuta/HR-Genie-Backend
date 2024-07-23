@@ -17,9 +17,14 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
     # maybe there is more than 1 join and does not know which to use
     # requester_id
 
+    # overwrite the serializer: nested serializer
+    requester = UserProfileSerializerAll(read_only=True)
 
     class Meta:
         model = AbsenceRequest
+
+        pass
+
         fields = ['id', 'requester',
                   'startDt', 'endDt',
                   'reason', 'status',
@@ -29,6 +34,9 @@ class AbsenceSerializerAll(serializers.ModelSerializer):
         read_only_fields = ['requester', 'status',
                             'durationWorkHours', 'durationWorkTimeFormatted'  # uploaded in the phase of POST
                             ]  # cannot be modified
+
+        pass
+
         #fields = '__all__'
         #fields.append('userData')  # does not work
         # why is userData not printer???
