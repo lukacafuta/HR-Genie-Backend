@@ -39,7 +39,12 @@ class UserProfileSerializerAll(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['id', 'customUser', 'approver', 'company', 'department', 'birthdayDate', 'firstDayAtWork', 'gender', 'timeDepVars']
+        fields = ['id', 'customUser', 'approver',\
+                  'company', 'department',\
+                  'canton', 'city', 'street', 'postcode', 'phone', \
+                  'birthdayDate', 'firstDayAtWork',\
+                  'gender', 'timeDepVars'\
+                  ]
 
 
 #  ..........................................................
