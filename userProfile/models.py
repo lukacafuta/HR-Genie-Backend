@@ -16,6 +16,15 @@ class UserProfile(models.Model):
     birthdayDate = models.DateField(blank=True, null=True)
     firstDayAtWork = models.DateField(blank=True, null=True)
 
+    # other info # added 2024-07-23
+    phone  = models.CharField(max_length=20, blank=True, null=True)
+    canton = models.CharField(max_length=40, blank=True, null=True)
+    city   = models.CharField(max_length=50, blank=True, null=True)
+    street = models.CharField(max_length=100, blank=True, null=True)
+    postcode = models.CharField(max_length=12, blank=True, null=True)
+
+
+
     # company
     company = models.ForeignKey(to=CompaniesProfile, on_delete=models.CASCADE, default=1)
 
