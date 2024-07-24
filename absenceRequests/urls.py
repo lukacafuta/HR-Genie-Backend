@@ -15,4 +15,5 @@ urlpatterns = [
     path('manager/myteam/', ListAbsenceManagerMyTeamView.as_view()),
     path('manager/myteam/<int:pk>', ModifyAbsenceManagerMyTeamView.as_view()),
     # path('<int:pk>/', RecipeByIdView.as_view())
+    # new comment
 ]
