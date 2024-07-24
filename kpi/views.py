@@ -115,11 +115,11 @@ class ComputeKpiYearlyMe(GenericAPIView):
             now_customuser_id = user['customUser']['id']
 
             # from time dep var
-            now_tot_vacation_days = [entry['value'] for entry in user['timeDepVars']
-                                     if entry['variable'] == 'nr_tot_vacation_days'][0]
+            now_tot_vacation_days = float([entry['value'] for entry in user['timeDepVars']
+                                     if entry['variable'] == 'nr_tot_vacation_days'][0])
             # to convert hours in days
-            now_nr_working_h_per_day_100perc_pensum = [entry['value'] for entry in user['timeDepVars']
-                                                       if entry['variable'] == 'nr_working_hours_per_day_at100PercPensum'][0]
+            now_nr_working_h_per_day_100perc_pensum = float([entry['value'] for entry in user['timeDepVars']
+                                                       if entry['variable'] == 'nr_working_hours_per_day_at100PercPensum'][0])
             # converted into hours
             now_tot_vacation_hours = float(now_tot_vacation_days) * float(now_nr_working_h_per_day_100perc_pensum)
 
@@ -128,12 +128,12 @@ class ComputeKpiYearlyMe(GenericAPIView):
 
             # sum of the duration of the absence requests selected grouped by
             # list of unique cases of reason/status
-            #list_reason_status = list(set([ entry['reason'] + '/' + entry['status'] for entry in selected_absence ]))
+            #list_reason_status = list(set([ entry['reason'] + '__' + entry['status'] for entry in selected_absence ]))
             absence_grouped_duration_hours = {}
             # Iterate through each record
             for now_abs in selected_absence:
                 # Create a key from the category and region
-                key = 'absence_duration_hours__' + now_abs["reason"] + '/' + now_abs["status"]
+                key = 'absence_duration_hours__' + now_abs["reason"] + '__' + now_abs["status"]
 
                 # If the key is not in the dictionary, add it with a value of 0
                 if key not in absence_grouped_duration_hours:
@@ -153,7 +153,7 @@ class ComputeKpiYearlyMe(GenericAPIView):
             # Iterate through each record
             for now_trai in selected_training:
                 # Create a key from the category and region
-                key = 'training_nr_courses__' + now_trai["statusApproval"] + '/' + now_trai["statusAdvancement"]
+                key = 'training_nr_courses__' + now_trai["statusApproval"] + '__' + now_trai["statusAdvancement"]
 
                 # If the key is not in the dictionary, add it with a value of 0
                 if key not in training_grouped_nr_courses:
@@ -321,8 +321,8 @@ class ComputeKpiYearlyManagerMyTeam(GenericAPIView):
 
             # from time dep var
             try:
-                now_tot_vacation_days = [entry['value'] for entry in user['timeDepVars'] \
-                                         if entry['variable'] == 'nr_tot_vacation_days'][0]
+                now_tot_vacation_days = float([entry['value'] for entry in user['timeDepVars'] \
+                                         if entry['variable'] == 'nr_tot_vacation_days'][0])
             except:
                 # raise exception if not found
                 message = f"PROBLEM: the user {now_username} does not have nr_tot_vacation_days"
@@ -330,8 +330,8 @@ class ComputeKpiYearlyManagerMyTeam(GenericAPIView):
 
             # to convert hours in days
             try:
-                now_nr_working_h_per_day_100perc_pensum = [entry['value'] for entry in user['timeDepVars'] \
-                                                       if entry['variable'] == 'nr_working_hours_per_day_at100PercPensum'][0]
+                now_nr_working_h_per_day_100perc_pensum = float([entry['value'] for entry in user['timeDepVars'] \
+                                                       if entry['variable'] == 'nr_working_hours_per_day_at100PercPensum'][0])
             except:
                 # raise exception if not found
                 message = f"PROBLEM: the user {now_username} does not have nr_working_hours_per_day_at100PercPensum"
@@ -346,12 +346,12 @@ class ComputeKpiYearlyManagerMyTeam(GenericAPIView):
 
             # sum of the duration of the absence requests selected grouped by
             # list of unique cases of reason/status
-            #list_reason_status = list(set([ entry['reason'] + '/' + entry['status'] for entry in selected_absence ]))
+            #list_reason_status = list(set([ entry['reason'] + '__' + entry['status'] for entry in selected_absence ]))
             absence_grouped_duration_hours = {}
             # Iterate through each record
             for now_abs in selected_absence:
                 # Create a key from the category and region
-                key = 'absence_duration_hours__' + now_abs["reason"] + '/' + now_abs["status"]
+                key = 'absence_duration_hours__' + now_abs["reason"] + '__' + now_abs["status"]
 
                 # If the key is not in the dictionary, add it with a value of 0
                 if key not in absence_grouped_duration_hours:
@@ -371,7 +371,7 @@ class ComputeKpiYearlyManagerMyTeam(GenericAPIView):
             # Iterate through each record
             for now_trai in selected_training:
                 # Create a key from the category and region
-                key = 'training_nr_courses__' + now_trai["statusApproval"] + '/' + now_trai["statusAdvancement"]
+                key = 'training_nr_courses__' + now_trai["statusApproval"] + '__' + now_trai["statusAdvancement"]
 
                 # If the key is not in the dictionary, add it with a value of 0
                 if key not in training_grouped_nr_courses:
