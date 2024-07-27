@@ -90,7 +90,7 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
                 - sick_leave
 
             The status gets set automatically:
-                - if reason = sick_leave, then status = 'accepted'
+                - if reason = sick_leave, then status = 'accepted' -> 'approved'
                 - other reasons -> status = 'pending'
 
             Validations performed:
