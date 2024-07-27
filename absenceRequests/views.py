@@ -90,7 +90,7 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
                 - sick_leave
 
             The status gets set automatically:
-                - if reason = sick_leave, then status = 'accepted'
+                - if reason = sick_leave, then status = 'accepted' -> 'approved'
                 - other reasons -> status = 'pending'
 
             Validations performed:
@@ -113,7 +113,8 @@ class CreateListModifyAbsenceMeView(GenericAPIView):
         # handle the case of reason not specified -> it is vacation
         try:
             if serializer.validated_data['reason'] in ['sick_leave']:
-                status_here = 'accepted'
+                #status_here = 'accepted'
+                status_here = 'approved'  # fix 2024-07-27
             else:
                 status_here = 'pending'
         except:
