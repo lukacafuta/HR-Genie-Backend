@@ -12,7 +12,7 @@ class TrainingRequest(models.Model):
 
     title = models.CharField(max_length=300)
     trainingUrl = models.CharField(max_length=500)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)  # 2024-07-28
 
     price = models.IntegerField()
 
