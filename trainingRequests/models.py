@@ -14,7 +14,8 @@ class TrainingRequest(models.Model):
     trainingUrl = models.CharField(max_length=500)
     description = models.TextField(blank=True, null=True)  # 2024-07-28
 
-    price = models.IntegerField()
+    #price = models.IntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     STATUS_APPROVAL = [
         ('pending', 'Pending'),
